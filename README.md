@@ -80,6 +80,9 @@ Write-Host "Permissions assigned successfully!"
 ```
 
 **Note**: Assigning Microsoft Graph permissions requires **Global Administrator** or **Privileged Role Administrator** role.
+## Screen shots:
+
+<img width="1164" height="1222" alt="image" src="https://github.com/user-attachments/assets/2fd34fb6-c6f3-49dc-b62c-bd89fbb6a248" />
 
 
 ## License
