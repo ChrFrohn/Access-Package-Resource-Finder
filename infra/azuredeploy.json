@@ -57,7 +57,7 @@
     },
     "repoUrl": {
       "type": "string",
-      "defaultValue": "https://dev.azure.com/ChristianFrohn/Access%20Package%20Resource%20Finder/_git/Access%20Package%20Resource%20Finder",
+      "defaultValue": "https://github.com/ChrFrohn/Access-Package-Resource-Finder.git",
       "metadata": {
         "description": "The Git repository URL for deployment. Leave empty to skip source control configuration."
       }
@@ -76,7 +76,7 @@
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2023-12-01",
+      "apiVersion": "2022-03-01",
       "name": "[variables('appServicePlanName')]",
       "location": "[parameters('location')]",
       "sku": {
@@ -89,7 +89,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2023-12-01",
+      "apiVersion": "2022-03-01",
       "name": "[parameters('webAppName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -112,9 +112,27 @@
             {
               "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
               "value": "true"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "[parameters('nodeVersion')]"
             }
           ]
         }
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/sourcecontrols",
+      "apiVersion": "2015-08-01",
+      "name": "[concat(parameters('webAppName'), '/web')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+      ],
+      "properties": {
+        "repoUrl": "[parameters('repoUrl')]",
+        "branch": "[parameters('branch')]",
+        "isManualIntegration": true
       }
     }
   ],
@@ -129,14 +147,14 @@
     },
     "principalId": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2023-12-01', 'Full').identity.principalId]",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-03-01', 'Full').identity.principalId]",
       "metadata": {
         "description": "The Principal ID of the system-assigned managed identity. Use this to assign Microsoft Graph API permissions."
       }
     },
     "tenantId": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2023-12-01', 'Full').identity.tenantId]",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-03-01', 'Full').identity.tenantId]",
       "metadata": {
         "description": "The Tenant ID of the managed identity."
       }
