@@ -2,6 +2,8 @@
 
 A web application to search for resources across all Entra ID Access Packages. This tool helps quickly identify which Access Packages contain specific resources like Applications, Groups, or SharePoint sites.
 
+This app is based of the PowerShell scripts found in this blog post : https://www.christianfrohn.dk/2025/05/08/finding-resources-in-microsoft-entra-id-governance-access-packages-using-powershell/
+
 ## Features
 
 - 🔍 **Search by Application** - Find Access Packages containing a specific application (by Object ID)
