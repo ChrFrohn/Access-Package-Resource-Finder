@@ -15,16 +15,17 @@ This app is based of the PowerShell scripts found in this blog post : https://ww
 
 - Azure subscription
 - **Microsoft Graph PowerShell Module** (for granting permissions to Managed Identity)
+    * Permissions needed for the managed identity (Web app):
+      - EntitlementManagement.Read.All
+      - Group.Read.All
 - **Azure PowerShell Module** (for managing Azure resources)
 - Permissions to create Azure resources and assign Microsoft Graph API permissions
 
 ## Deploy to Azure
 
-Click the button below to deploy this application to your Azure subscription using the included ARM template:
+Fork this repo, then click the button below to deploy this application to your Azure subscription using the included ARM template:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FChrFrohn%2FAccess-Package-Resource-Finder%2Fmain%2Finfra%2Fazuredeploy.json)
-
-**Alternative**: Use Azure CLI to deploy the ARM template from the `infra/` folder (see [deployment instructions](#option-1-deploy-using-arm-template-recommended) below).
 
 > **⚠️ Important**: After deployment, you **must** configure Managed Identity permissions. See [Post-Deployment Configuration](#post-deployment-configuration).
 
