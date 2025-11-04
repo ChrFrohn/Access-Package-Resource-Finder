@@ -1,0 +1,145 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "The name of the web app. Must be globally unique."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "B1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P1v2",
+        "P2v2",
+        "P3v2",
+        "P1v3",
+        "P2v3",
+        "P3v3"
+      ],
+      "metadata": {
+        "description": "The pricing tier for the App Service plan. F1 is free but has limitations. B1 is recommended for production."
+      }
+    },
+    "nodeVersion": {
+      "type": "string",
+      "defaultValue": "~22",
+      "allowedValues": [
+        "~18",
+        "~20",
+        "~22"
+      ],
+      "metadata": {
+        "description": "The Node.js version to use. ~22 is the latest LTS and recommended."
+      }
+    },
+    "repoUrl": {
+      "type": "string",
+      "defaultValue": "https://dev.azure.com/ChristianFrohn/Access%20Package%20Resource%20Finder/_git/Access%20Package%20Resource%20Finder",
+      "metadata": {
+        "description": "The Git repository URL for deployment. Leave empty to skip source control configuration."
+      }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "main",
+      "metadata": {
+        "description": "The branch to deploy from the Git repository."
+      }
+    }
+  },
+  "variables": {
+    "appServicePlanName": "[concat('asp-', parameters('webAppName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2023-12-01",
+      "name": "[variables('appServicePlanName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('sku')]"
+      },
+      "properties": {
+        "reserved": false
+      },
+      "kind": "windows"
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2023-12-01",
+      "name": "[parameters('webAppName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ],
+      "kind": "app",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "httpsOnly": true,
+        "siteConfig": {
+          "nodeVersion": "[parameters('nodeVersion')]",
+          "alwaysOn": "[if(equals(parameters('sku'), 'F1'), false(), true())]",
+          "ftpsState": "Disabled",
+          "minTlsVersion": "1.2",
+          "http20Enabled": true,
+          "appSettings": [
+            {
+              "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+              "value": "true"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "webAppUrl": {
+      "type": "string",
+      "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('webAppName'))).defaultHostName)]"
+    },
+    "webAppName": {
+      "type": "string",
+      "value": "[parameters('webAppName')]"
+    },
+    "principalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2023-12-01', 'Full').identity.principalId]",
+      "metadata": {
+        "description": "The Principal ID of the system-assigned managed identity. Use this to assign Microsoft Graph API permissions."
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2023-12-01', 'Full').identity.tenantId]",
+      "metadata": {
+        "description": "The Tenant ID of the managed identity."
+      }
+    }
+  }
+}

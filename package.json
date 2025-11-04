@@ -1,0 +1,27 @@
+{
+  "name": "access-package-resource-finder",
+  "version": "1.0.0",
+  "description": "Web application to search for resources in Entra ID Access Packages",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "azure",
+    "entra-id",
+    "access-packages",
+    "microsoft-graph"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/identity": "^4.13.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "express": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  }
+}

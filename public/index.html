@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Package Resource Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px 6px 0 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .results-count {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .result-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .result-title {
+            color: #667eea;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-detail {
+            display: flex;
+            margin-bottom: 8px;
+            padding: 8px 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 150px;
+        }
+
+        .result-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-results-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .help-text {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #014361;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-application {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-group {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-sharepoint {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Access Package Resource Finder</h1>
+        <p class="subtitle">Search for resources across all Entra ID Access Packages</p>
+
+        <div class="search-section">
+            <div class="form-group">
+                <label for="searchType">Resource Type</label>
+                <select id="searchType" onchange="updateSearchUI()">
+                    <option value="">-- Select Resource Type --</option>
+                    <option value="application">Application (by Name)</option>
+                    <option value="group">Group (by Name)</option>
+                    <option value="sharepoint">SharePoint Site (by URL)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="searchValueGroup" style="display: none;">
+                <label for="searchValue" id="searchValueLabel">Search Value</label>
+                <input type="text" id="searchValue" placeholder="Enter search value...">
+                <div class="help-text" id="helpText"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="searchResources()" id="searchButton" disabled>
+                    Search Access Packages
+                </button>
+                <button class="btn-secondary" onclick="clearSearch()">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Searching through all Access Packages...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="results" class="results-section" style="display: none;"></div>
+    </div>
+
+    <script>
+        function updateSearchUI() {
+            const searchType = document.getElementById('searchType').value;
+            const searchValueGroup = document.getElementById('searchValueGroup');
+            const searchValueLabel = document.getElementById('searchValueLabel');
+            const searchValueInput = document.getElementById('searchValue');
+            const helpText = document.getElementById('helpText');
+            const searchButton = document.getElementById('searchButton');
+
+            if (searchType) {
+                searchValueGroup.style.display = 'block';
+                searchButton.disabled = false;
+
+                switch(searchType) {
+                    case 'application':
+                        searchValueLabel.textContent = 'Application Display Name';
+                        searchValueInput.placeholder = 'e.g., Salesforce';
+                        helpText.innerHTML = '<strong>Note:</strong> Enter the display name of the Enterprise Application (supports partial matching).<br>Find this in: Entra ID → Enterprise Applications → [Your App] → Properties → Name';
+                        break;
+                    case 'group':
+                        searchValueLabel.textContent = 'Group Display Name';
+                        searchValueInput.placeholder = 'e.g., Sales Team';
+                        helpText.innerHTML = '<strong>Note:</strong> Enter the exact display name of the group as shown in Entra ID.';
+                        break;
+                    case 'sharepoint':
+                        searchValueLabel.textContent = 'SharePoint Site URL';
+                        searchValueInput.placeholder = 'e.g., https://contoso.sharepoint.com/sites/YourSite';
+                        helpText.innerHTML = '<strong>Note:</strong> Enter the full SharePoint site URL including https://.';
+                        break;
+                }
+            } else {
+                searchValueGroup.style.display = 'none';
+                searchButton.disabled = true;
+            }
+        }
+
+        async function searchResources() {
+            const searchType = document.getElementById('searchType').value;
+            let searchValue = document.getElementById('searchValue').value.trim();
+
+            if (!searchType || !searchValue) {
+                showError('Please select a resource type and enter a search value.');
+                return;
+            }
+
+            // Clear previous results
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                // If searching for an application, resolve the name to Object ID first
+                if (searchType === 'application') {
+                    const resolveResponse = await fetch('/api/resolveApplication', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ applicationName: searchValue })
+                    });
+
+                    if (!resolveResponse.ok) {
+                        const errorData = await resolveResponse.json();
+                        throw new Error(errorData.error || 'Failed to resolve application name');
+                    }
+
+                    const resolveData = await resolveResponse.json();
+                    
+                    // Handle multiple matches - let user select
+                    if (resolveData.multiple) {
+                        document.getElementById('loading').style.display = 'none';
+                        showApplicationSelection(resolveData.applications, searchValue);
+                        return;
+                    }
+                    
+                    searchValue = resolveData.objectId;
+                    console.log(`Resolved application "${resolveData.displayName}" to Object ID: ${searchValue}`);
+                }
+
+                // If searching for a group, resolve the name to Object ID first
+                if (searchType === 'group') {
+                    const resolveResponse = await fetch('/api/resolveGroup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ groupName: searchValue })
+                    });
+
+                    if (!resolveResponse.ok) {
+                        const errorData = await resolveResponse.json();
+                        throw new Error(errorData.error || 'Failed to resolve group name');
+                    }
+
+                    const resolveData = await resolveResponse.json();
+                    searchValue = resolveData.groupId;
+                    console.log(`Resolved group "${resolveData.displayName}" to ID: ${searchValue}`);
+                }
+
+                // Perform the search
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ searchType, searchValue })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.details || errorData.error || 'Search failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                showError(`Error: ${error.message}`);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const { results, searchType, searchValue } = data;
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="results-header">Search Results</div>
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No Access Packages Found</h3>
+                        <p>The resource was not found in any Access Package.</p>
+                    </div>
+                `;
+            } else {
+                const badgeClass = `badge-${searchType}`;
+                let resultsHTML = `
+                    <div class="results-header">Search Results</div>
+                    <div class="results-count">
+                        Found <strong>${results.length}</strong> Access Package${results.length > 1 ? 's' : ''} containing this resource
+                    </div>
+                `;
+
+                results.forEach(result => {
+                    resultsHTML += `
+                        <div class="result-card">
+                            <div class="result-title">
+                                ${result.accessPackageName}
+                                <span class="badge ${badgeClass}">${result.resourceType}</span>
+                            </div>
+                            <div class="result-detail">
+                                <span class="result-label">Access Package ID:</span>
+                                <span class="result-value">${result.accessPackageId}</span>
+                            </div>
+                            <div class="result-detail">
+                                <span class="result-label">Resource Name:</span>
+                                <span class="result-value">${result.resourceName}</span>
+                            </div>
+                            <div class="result-detail">
+                                <span class="result-label">Role:</span>
+                                <span class="result-value">${result.roleName}</span>
+                            </div>
+                            <div class="result-detail">
+                                <span class="result-label">Resource ID:</span>
+                                <span class="result-value">${result.resourceId}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                resultsDiv.innerHTML = resultsHTML;
+            }
+
+            resultsDiv.style.display = 'block';
+        }
+
+        function showApplicationSelection(applications, searchTerm) {
+            const resultsDiv = document.getElementById('results');
+            
+            let selectionHTML = `
+                <div class="results-header">Multiple Applications Found</div>
+                <div class="results-count">
+                    Found <strong>${applications.length}</strong> applications matching "${searchTerm}". Please select one:
+                </div>
+            `;
+
+            applications.forEach(app => {
+                selectionHTML += `
+                    <div class="result-card" style="cursor: pointer;" onclick="selectApplication('${app.objectId}', '${app.displayName.replace(/'/g, "\\'")}')">
+                        <div class="result-title">${app.displayName}</div>
+                        <div class="result-detail">
+                            <span class="result-label">Object ID:</span>
+                            <span class="result-value">${app.objectId}</span>
+                        </div>
+                        <div class="result-detail">
+                            <span class="result-label">App ID:</span>
+                            <span class="result-value">${app.appId}</span>
+                        </div>
+                        <div style="margin-top: 10px; color: #667eea; font-weight: 600;">
+                            👉 Click to search with this application
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = selectionHTML;
+            resultsDiv.style.display = 'block';
+        }
+
+        async function selectApplication(objectId, displayName) {
+            console.log(`User selected application "${displayName}" with Object ID: ${objectId}`);
+            
+            // Show loading
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                // Perform the search with the selected Object ID
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        searchType: 'application', 
+                        searchValue: objectId 
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.details || errorData.error || 'Search failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                showError(`Error: ${error.message}`);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearSearch() {
+            document.getElementById('searchType').value = '';
+            document.getElementById('searchValue').value = '';
+            document.getElementById('searchValueGroup').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('searchButton').disabled = true;
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('searchValue').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !document.getElementById('searchButton').disabled) {
+                searchResources();
+            }
+        });
+    </script>
+</body>
+</html>

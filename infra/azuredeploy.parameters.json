@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "value": "access-package-finder"
+    },
+    "sku": {
+      "value": "B1"
+    },
+    "nodeVersion": {
+      "value": "~22"
+    },
+    "repoUrl": {
+      "value": "https://dev.azure.com/ChristianFrohn/Access%20Package%20Resource%20Finder/_git/Access%20Package%20Resource%20Finder"
+    },
+    "branch": {
+      "value": "main"
+    }
+  }
+}
