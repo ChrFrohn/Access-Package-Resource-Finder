@@ -22,7 +22,7 @@ This app is based of the PowerShell scripts found in this blog post : https://ww
 
 Click the button below to deploy this application to your Azure subscription using the included ARM template:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fyour-org%2FAccess-Package-Resource-Finder%2Fmain%2Finfra%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FChrFrohn%2FAccess-Package-Resource-Finder%2Fmain%2Finfra%2Fazuredeploy.json)
 
 **Alternative**: Use Azure CLI to deploy the ARM template from the `infra/` folder (see [deployment instructions](#option-1-deploy-using-arm-template-recommended) below).
 
@@ -31,6 +31,8 @@ Click the button below to deploy this application to your Azure subscription usi
 ### Post-Deployment Configuration
 
 After deployment, you **must** configure Microsoft Graph API permissions for the Managed Identity.
+
+> **💡 Recommended**: Once deployed, enable Single Sign-On (SSO) for better security and user experience. Follow the guide: [Configure Microsoft Entra ID authentication for App Service](https://learn.microsoft.com/azure/app-service/configure-authentication-provider-aad?tabs=workforce-configuration&wt.mc_id=MVP_453718)
 
 #### Step 1: Install Required PowerShell Modules
 
